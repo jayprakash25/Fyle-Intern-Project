@@ -42,5 +42,6 @@ def authenticate_principal(func):
         else:
             assertions.assert_found(None, 'No such api')
 
-        return func(p, *args, **kwargs)
+        incoming_payload = request.json  # Get the incoming payload from the request
+        return func(p, incoming_payload, *args, **kwargs)
     return wrapper

@@ -5,12 +5,15 @@ from sqlalchemy import event
 from sqlalchemy.engine import Engine
 from sqlite3 import Connection as SQLite3Connection
 
+
 app = Flask(__name__)
+print(f"Flask app created successfully: {app}")
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///./store.sqlite3'
 app.config['SQLALCHEMY_ECHO'] = False
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+print(f"Database created successfully: {db}")
 app.test_client()
 
 
@@ -21,3 +24,5 @@ def _set_sqlite_pragma(dbapi_connection, connection_record):
         cursor = dbapi_connection.cursor()
         cursor.execute("PRAGMA foreign_keys=ON;")
         cursor.close()
+
+

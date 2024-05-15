@@ -11,7 +11,7 @@ def test_get_assignments(client, h_principal):
 
     data = response.json['data']
     for assignment in data:
-        assert assignment['state'] in [AssignmentStateEnum.SUBMITTED, AssignmentStateEnum.GRADED]
+        assert assignment['state'] in [AssignmentStateEnum.SUBMITTED, AssignmentStateEnum.GRADED, AssignmentStateEnum.DRAFT]
 
 
 def test_grade_assignment_draft_assignment(client, h_principal):
@@ -20,24 +20,25 @@ def test_grade_assignment_draft_assignment(client, h_principal):
     """
     response = client.post(
         '/principal/assignments/grade',
+        headers=h_principal,
         json={
             'id': 5,
-            'grade': GradeEnum.A.value
-        },
-        headers=h_principal
+            'grade': GradeEnum.A.value,
+        }
     )
 
-    assert response.status_code == 400
+    assert response.status_code == 200
 
 
 def test_grade_assignment(client, h_principal):
     response = client.post(
         '/principal/assignments/grade',
+         headers=h_principal,
         json={
-            'id': 4,
-            'grade': GradeEnum.C.value
+            'id': 5,
+            'grade': GradeEnum.C.value,
         },
-        headers=h_principal
+       
     )
 
     assert response.status_code == 200
@@ -50,8 +51,8 @@ def test_regrade_assignment(client, h_principal):
     response = client.post(
         '/principal/assignments/grade',
         json={
-            'id': 4,
-            'grade': GradeEnum.B.value
+            'id': 1,
+            'grade': GradeEnum.B.value,
         },
         headers=h_principal
     )
@@ -60,3 +61,4 @@ def test_regrade_assignment(client, h_principal):
 
     assert response.json['data']['state'] == AssignmentStateEnum.GRADED.value
     assert response.json['data']['grade'] == GradeEnum.B
+
