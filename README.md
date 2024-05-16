@@ -1,58 +1,80 @@
-# Fyle Backend Challenge
+## Setup
 
-## Who is this for?
+This application can be run either using Docker or directly on your machine.
 
-This challenge is meant for candidates who wish to intern at Fyle and work with our engineering team. You should be able to commit to at least 6 months of dedicated time for internship.
+### Prerequisites
 
-## Why work at Fyle?
+- Python 3.8 installed on your machine. You can download Python [here](https://www.python.org/downloads/).
+- Docker installed on your machine (optional). You can download Docker [here](https://www.docker.com/products/docker-desktop).
 
-Fyle is a fast-growing Expense Management SaaS product. We are ~40 strong engineering team at the moment. 
+### Running with Docker
 
-We are an extremely transparent organization. Check out our [careers page](https://careers.fylehq.com) that will give you a glimpse of what it is like to work at Fyle. Also, check out our Glassdoor reviews [here](https://www.glassdoor.co.in/Reviews/Fyle-Reviews-E1723235.htm). You can read stories from our teammates [here](https://stories.fylehq.com).
+1. Clone the repository:
+    ```
+    git clone https://github.com/jayprakash25/Fyle-Intern-Project.git
+    ```
+
+2. Navigate to the project directory:
+    ```
+    cd Fyle-Intern-Project
+    ```
+
+3. Build the Docker image:
+    ```
+    docker build -t my-python-app .
+    ```
+
+4. Run the Docker container:
+    ```
+    docker run -p 5000:5000 my-python-app
+    ```
+
+The application should now be running at `http://localhost:5000`.
+
+### Running without Docker
+
+1. Clone the repository:
+    ```
+    git clone https://github.com/jayprakash25/Fyle-Intern-Project.git
+    ```
+
+2. Navigate to the project directory:
+    ```
+    cd Fyle-Intern-Project
+    ```
+
+3. Create a virtual environment and activate it:
+    ```
+    virtualenv env --python=python3.8
+    source env/bin/activate
+    ```
+
+4. Install the required packages:
+    ```
+    pip install -r requirements.txt
+    ```
+
+5. Reset the database:
+    ```
+    export FLASK_APP=core/server.py
+    rm core/store.sqlite3
+    flask db upgrade -d core/migrations/
+    ```
+
+6. Start the server:
+    ```
+    bash run.sh
+    ```
 
 
-## Challenge outline
+## Application Structure
 
-**You are allowed to use any online/AI tool such as ChatGPT, Gemini, etc. to complete the challenge. However, we expect you to fully understand the code and logic involved.**
+- `core/server.py`: This is the main application file.
+- `core/migrations/`: This directory contains database migration files.
+- `requirements.txt`: This file contains a list of python dependencies to be installed.
+- `app.ini`: This is the uWSGI configuration file.
+- `run.sh`: This is a bash script to start the server.
 
-This challenge involves writing a backend service for a classroom. The challenge is described in detail [here](./Application.md)
+## Note
 
-
-## What happens next?
-
-You will hear back within 48 hours from us via email. 
-
-
-## Installation
-
-1. Fork this repository to your github account
-2. Clone the forked repository and proceed with steps mentioned below
-
-### Install requirements
-
-```
-virtualenv env --python=python3.8
-source env/bin/activate
-pip install -r requirements.txt
-```
-### Reset DB
-
-```
-export FLASK_APP=core/server.py
-rm core/store.sqlite3
-flask db upgrade -d core/migrations/
-```
-### Start Server
-
-```
-bash run.sh
-```
-### Run Tests
-
-```
-pytest -vvv -s tests/
-
-# for test coverage report
-# pytest --cov
-# open htmlcov/index.html
-```
+The Dockerfile in this project uses Python 3.8 slim image. It sets the working directory in the container to `/app`. It then adds the current directory contents into the container at `/app` and installs the necessary packages specified in `requirements.txt`. It sets the environment variable `FLASK_APP` to `core/server.py` and runs database migrations. It exposes port 5000 and starts the uWSGI server.
