@@ -24,9 +24,7 @@ def get_principal_assignments(p, incoming_payload):
 def get_principal_teachers(p, incoming_payload):
     """Returns list of all teachers"""
     teachers = Teacher.query.all()
-    #serialize the teachers
-    
-    teacher_data = [teacher.serialize() for teacher in teachers]
+    teacher_data = [{'id': teacher.id} for teacher in teachers]
     return APIResponse.respond(data=teacher_data)
 
 @principal_resources.route('/assignments/grade', methods=['POST'], strict_slashes=False)

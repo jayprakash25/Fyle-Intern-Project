@@ -1,6 +1,8 @@
 import pytest
 from core.models.assignments import Assignment, AssignmentStateEnum
 from core import db 
+import threading
+
 
 
 def test_grade_assignment(client, h_principal):
@@ -48,22 +50,25 @@ def test_regrade_assignment(client, h_principal):
         pytest.skip("No assignment in GRADED state found in the database")
 
 
+
 def test_concurrent_grading(client, h_principal):
     """Test concurrent grading attempts"""
     grade_payload = {'id': '1', 'grade': 'B'}
-    from threading import Thread
+
     def grade():
         client.post('/principal/assignments/grade', headers=h_principal, json=grade_payload)
 
-    thread1 = Thread(target=grade)
-    thread2 = Thread(target=grade)
-    thread1.start()
-    thread2.start()
-    thread1.join()
-    thread2.join()
+    threads = []
+    for _ in range(2):
+        thread = threading.Thread(target=grade)
+        threads.append(thread)
+        thread.start()
+
+    for thread in threads:
+        thread.join()
 
     assignment = Assignment.query.get(1)
-    assert assignment.grade == 'B' 
+    assert assignment.grade == 'B'
 
 def test_idempotent_grading(client, h_principal):
     """Test same grading behavior"""
